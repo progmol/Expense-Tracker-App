@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		330E1D532E20DAEA008F5234 /* ExpenseModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 330E1D512E20DAEA008F5234 /* ExpenseModel.xcdatamodeld */; };
+		330E1D552E2124B1008F5234 /* Expenses.swift in Sources */ = {isa = PBXBuildFile; fileRef = 330E1D542E2124B1008F5234 /* Expenses.swift */; };
 		33946A142E1F98EA009AF9C4 /* Home.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33946A132E1F98EA009AF9C4 /* Home.swift */; };
 		33A2E2212E1FC93900A2442A /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 33A2E2202E1FC93900A2442A /* FirebaseAuth */; };
 		33A2E2232E1FC93900A2442A /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 33A2E2222E1FC93900A2442A /* FirebaseFirestore */; };
@@ -25,6 +26,7 @@
 
 /* Begin PBXFileReference section */
 		330E1D522E20DAEA008F5234 /* ExpenseModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = ExpenseModel.xcdatamodel; sourceTree = "<group>"; };
+		330E1D542E2124B1008F5234 /* Expenses.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Expenses.swift; sourceTree = "<group>"; };
 		33946A132E1F98EA009AF9C4 /* Home.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Home.swift; sourceTree = "<group>"; };
 		CC6A98E02E1E3A6B00CEF251 /* SignUp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUp.swift; sourceTree = "<group>"; };
 		CC6A98E22E1E736900CEF251 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
@@ -77,6 +79,7 @@
 				CCD632D32E1E2D1F00048F1E /* Login.swift */,
 				CC6A98E02E1E3A6B00CEF251 /* SignUp.swift */,
 				33946A132E1F98EA009AF9C4 /* Home.swift */,
+				330E1D542E2124B1008F5234 /* Expenses.swift */,
 				CC6A98E22E1E736900CEF251 /* GoogleService-Info.plist */,
 				CCD632D52E1E2D1F00048F1E /* Main.storyboard */,
 				CCD632DB2E1E2D2100048F1E /* Assets.xcassets */,
@@ -173,6 +176,7 @@
 				CCD632D02E1E2D1F00048F1E /* AppDelegate.swift in Sources */,
 				330E1D532E20DAEA008F5234 /* ExpenseModel.xcdatamodeld in Sources */,
 				CCD632DA2E1E2D1F00048F1E /* Expense_Tracker_App.xcdatamodeld in Sources */,
+				330E1D552E2124B1008F5234 /* Expenses.swift in Sources */,
 				CCD632D22E1E2D1F00048F1E /* SceneDelegate.swift in Sources */,
 				33946A142E1F98EA009AF9C4 /* Home.swift in Sources */,
 				CC6A98E12E1E3A6B00CEF251 /* SignUp.swift in Sources */,
