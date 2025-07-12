@@ -8,6 +8,8 @@
 import Foundation
 import UIKit
 import CoreData
+import FirebaseFirestore
+import FirebaseAuth
 
 class Expenses: UIViewController {
     
@@ -22,6 +24,8 @@ class Expenses: UIViewController {
     let category = UITextField()
     let details = UITextField()
     let datePicker = UIDatePicker()
+    
+    var expenseToEdit: Expense?
     
     func interface() {
         
@@ -79,11 +83,21 @@ class Expenses: UIViewController {
         submitButton.backgroundColor = .systemBlue
         submitButton.setTitleColor(.white, for: .normal)
         submitButton.layer.cornerRadius = 8
-        submitButton.addTarget(self, action: #selector(addExpense), for: .touchUpInside)
+        submitButton.addTarget(self, action: #selector(addEditExpense), for: .touchUpInside)
         view.addSubview(submitButton)
+        
+        if let existing = expenseToEdit {
+            expenseTitle.text = existing.title
+            expenseAmount.text = "\(existing.amount)"
+            category.text = existing.category
+            details.text = existing.details
+            if let date = existing.date {
+                datePicker.date = date
+            }
+        }
     }
     
-    @objc func addExpense() {
+    @objc func addEditExpense() {
         guard
             let title = expenseTitle.text, !title.isEmpty,
             let textAmount = expenseAmount.text, let amount = Double(textAmount),
@@ -91,17 +105,85 @@ class Expenses: UIViewController {
             let expenseDetails = details.text, !expenseDetails.isEmpty
         else { return }
         let expenseDate = datePicker.date
-
+        
         let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
         let newExpense = Expense(context: context)
-        newExpense.title = title
-        newExpense.amount = amount
-        newExpense.date = expenseDate
-        newExpense.category = expenseCategory
-        newExpense.details = expenseDetails
-        try? context.save()
         
-        self.dismiss(animated: true, completion: nil)
+        if let existing = expenseToEdit {
+            // update existing
+            existing.title = title
+            existing.amount = amount
+            existing.date = expenseDate
+            existing.category = expenseCategory
+            existing.details = expenseDetails
+            // no need to update ID
+        } else {
+            // create new
+            newExpense.title = title
+            newExpense.amount = amount
+            newExpense.date = expenseDate
+            newExpense.category = expenseCategory
+            newExpense.details = expenseDetails
+            newExpense.id = UUID()
+        }
+        
+        try? context.save()
+        NotificationCenter.default.post(name: NSNotification.Name("Expense Added"), object: nil)
+        
+        guard let uid = Auth.auth().currentUser?.uid else {
+            print("No user logged in!")
+            return }
+        
+        let db = Firestore.firestore()
+        
+        let userRef = db.collection("users").document(uid)
+        
+        //Check if document of logged in user exists
+        userRef.getDocument { doc, error in
+            if let doc = doc, doc.exists {
+                userRef.collection("Expense").addDocument(data: [
+                    "title" : newExpense.title ?? "",
+                    "amount": newExpense.amount,
+                    "date": Timestamp(date: newExpense.date ?? Date()),
+                    "category": newExpense.category ?? "",
+                    "details": newExpense.details ?? "",
+                    "id": newExpense.id?.uuidString ?? "",
+                    "createdAt": FieldValue.serverTimestamp()
+                ]) { error in
+                    if let error = error {
+                        print("Failed to put data to Firestore: \(error)")
+                    } else {
+                        print("Expense successfully added to Firestore!")
+                    }
+                }
+            } else {
+                // user's document doesn't exist, so create doc and then add expense
+                userRef.setData([
+                    "createdAt": FieldValue.serverTimestamp()
+                ]) {error in
+                    if let error = error {
+                        print("Failed to create user document: \(error)")
+                    }
+                    userRef.collection("Expense").addDocument(data: [
+                        "title" : newExpense.title ?? "",
+                        "amount": newExpense.amount,
+                        "date": Timestamp(date: newExpense.date ?? Date()),
+                        "category": newExpense.category ?? "",
+                        "details": newExpense.details ?? "",
+                        "id": newExpense.id?.uuidString ?? "",
+                        "createdAt": FieldValue.serverTimestamp()
+                    ]) {error in
+                        if let error = error {
+                            print("Failed to add expense to Firestore: \(error)")
+                        } else {
+                            print("Expense successfully added to Firestore after creating user!")
+                        }
+                    }
+                }
+            }
+            
+            self.dismiss(animated: true, completion: nil)
+        }
+        
     }
-    
 }
