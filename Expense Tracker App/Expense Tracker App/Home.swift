@@ -31,9 +31,15 @@ class Home: UIViewController {
         setupCollectionView()
         fetchTargetAndUpdateUI()
         fetchExpenses()
-
+        
         NotificationCenter.default.addObserver(self, selector: #selector(refreshExpenses), name: NSNotification.Name("Expense Added"), object: nil)
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        limitNotification()
+    }
+
 
     // MARK: - Home target view
     func homeView(){
@@ -113,6 +119,7 @@ class Home: UIViewController {
         let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
         let request: NSFetchRequest<Expense> = Expense.fetchRequest()
         allExpenses = try? context.fetch(request)
+        limitNotification()
         collectionView.reloadData()
     }
 
@@ -161,8 +168,9 @@ class Home: UIViewController {
         let index = sender.tag
         let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
         if let expenseToDelete = allExpenses?[index] {
-            context.delete(expenseToDelete)
+            expenseToDelete.needsDelete = true // mark for delete
             try? context.save()
+            SyncManager.shared.syncIfNeeded()
             allExpenses?.remove(at: index)
             collectionView.reloadData()
         }
@@ -186,7 +194,48 @@ class Home: UIViewController {
         editViewController.expenseToEdit = expense
         present(editViewController, animated: true)
     }
+    
+    
+    // MARK: - Notification when user is exceeding the limit
+    
+    func limitNotification(){
+        let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+        
+        let targetRequest: NSFetchRequest<MonthlyTarget> = MonthlyTarget.fetchRequest()
+        targetRequest.predicate = NSPredicate(format: "month == %@", getCurrentMonth())
+        
+        var targetAmount = 0.0
+        
+        if let targets = try? context.fetch(targetRequest), let target = targets.first {
+            targetAmount = target.amount
+        }
+        
+        guard targetAmount != 0 else {
+            print("No monthly target set")
+            return
+        }
+        
+        let limitRequest: NSFetchRequest<Expense> = Expense.fetchRequest()
+        let expenses = (try? context.fetch(limitRequest)) ?? []
+        let total = expenses.reduce(0.0) { $0 + $1.amount }
+        
+        let percentage = (total / targetAmount) * 100
+        print("Target: \(targetAmount), Total spent: \(total), Percentage: \(percentage)")
+        
+        if percentage >= 80 {
+            showAlert("You are exceeding your monthly limit")
+        }
+        
+    }
+
+    func showAlert(_ message: String) {
+        let alert = UIAlertController(title: "Alert", message: message, preferredStyle: .alert)
+        let ok = UIAlertAction(title: "OK", style: .default, handler: nil)
+        alert.addAction(ok)
+        present(alert, animated: true)
+    }
 }
+
 
 
 // MARK: - Collection view data source & delegate --- It should be learn afterwards!!
@@ -248,6 +297,7 @@ extension Home: UICollectionViewDataSource, UICollectionViewDelegate {
         editExpense.addTarget(self, action: #selector(editExpenseFromCollection(_:)), for: .touchUpInside)
         cell.contentView.addSubview(editExpense)
 
+                
         return cell
     }
 }
