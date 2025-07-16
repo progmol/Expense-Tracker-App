@@ -35,10 +35,10 @@ class Home: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(refreshExpenses), name: NSNotification.Name("Expense Added"), object: nil)
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        limitNotification()
-    }
+//    override func viewWillAppear(_ animated: Bool) {
+//        super.viewWillAppear(animated)
+//        limitNotification()
+//    }
 
 
     // MARK: - Home target view
@@ -66,6 +66,7 @@ class Home: UIViewController {
         editButton.layer.cornerRadius = 8
         editButton.addTarget(self, action: #selector(handleAddOrEdit), for: .touchUpInside)
         view.addSubview(editButton)
+        
     }
 
     // MARK: - Expenses Add button
@@ -223,9 +224,10 @@ class Home: UIViewController {
         print("Target: \(targetAmount), Total spent: \(total), Percentage: \(percentage)")
         
         if percentage >= 80 {
-            showAlert("You are exceeding your monthly limit")
+            DispatchQueue.main.async {
+                    self.showAlert("You are exceeding your monthly limit")
+                }
         }
-        
     }
 
     func showAlert(_ message: String) {
@@ -234,6 +236,17 @@ class Home: UIViewController {
         alert.addAction(ok)
         present(alert, animated: true)
     }
+    
+    // MARK: - Exchange Rates Function
+
+        @objc func showExchangeRates(_ sender: UIButton){
+            let index = sender.tag
+            guard  let expense = allExpenses?[index] else {return}
+            let amount = expense.amount
+            let exchangeVC = exchangeViewController()
+            exchangeVC.baseAmount = amount
+            present(exchangeVC, animated: true)
+        }
 }
 
 
@@ -297,7 +310,15 @@ extension Home: UICollectionViewDataSource, UICollectionViewDelegate {
         editExpense.addTarget(self, action: #selector(editExpenseFromCollection(_:)), for: .touchUpInside)
         cell.contentView.addSubview(editExpense)
 
-                
+        let exchangeButton = UIButton(type: .system)
+        exchangeButton.setTitleColor(.blue, for: .normal)
+        exchangeButton.titleLabel?.font = UIFont.systemFont(ofSize: 14)
+        exchangeButton.frame = CGRect(x: cell.frame.width - 60, y: 70, width: 50, height: 30)
+        exchangeButton.tag = indexPath.item
+        exchangeButton.setTitle("Exchange", for: .normal)
+        exchangeButton.addTarget(self, action: #selector(showExchangeRates(_:)), for: .touchUpInside)
+        cell.contentView.addSubview(exchangeButton)
+        
         return cell
     }
 }
