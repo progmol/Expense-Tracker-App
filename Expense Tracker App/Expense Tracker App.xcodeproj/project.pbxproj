@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		330E1D532E20DAEA008F5234 /* ExpenseModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 330E1D512E20DAEA008F5234 /* ExpenseModel.xcdatamodeld */; };
 		330E1D552E2124B1008F5234 /* Expenses.swift in Sources */ = {isa = PBXBuildFile; fileRef = 330E1D542E2124B1008F5234 /* Expenses.swift */; };
+		333696B22E27D26B00D65FDF /* Chart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 333696B12E27D26400D65FDF /* Chart.swift */; };
 		339310462E229029009506EA /* syncManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 339310452E229029009506EA /* syncManager.swift */; };
 		33946A142E1F98EA009AF9C4 /* Home.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33946A132E1F98EA009AF9C4 /* Home.swift */; };
 		33A2E2262E1FCA6800A2442A /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 33A2E2252E1FCA6800A2442A /* GoogleSignIn */; };
@@ -177,6 +178,7 @@
 		333696AB2E27C6A700D65FDF /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		333696AD2E27C6A700D65FDF /* DGCharts.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DGCharts.h; sourceTree = "<group>"; };
 		333696AE2E27C6A700D65FDF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		333696B12E27D26400D65FDF /* Chart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chart.swift; sourceTree = "<group>"; };
 		339310452E229029009506EA /* syncManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = syncManager.swift; sourceTree = "<group>"; };
 		33946A132E1F98EA009AF9C4 /* Home.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Home.swift; sourceTree = "<group>"; };
 		33CA92AB2E27749D004B33C6 /* Exchange.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Exchange.swift; sourceTree = "<group>"; };
@@ -524,6 +526,7 @@
 				CC6A98E02E1E3A6B00CEF251 /* SignUp.swift */,
 				33946A132E1F98EA009AF9C4 /* Home.swift */,
 				33CA92AD2E27AC53004B33C6 /* Graphs.swift */,
+				333696B12E27D26400D65FDF /* Chart.swift */,
 				33CA92AB2E27749D004B33C6 /* Exchange.swift */,
 				330E1D542E2124B1008F5234 /* Expenses.swift */,
 				339310452E229029009506EA /* syncManager.swift */,
@@ -623,6 +626,7 @@
 				CCD632D42E1E2D1F00048F1E /* Login.swift in Sources */,
 				CCD632D02E1E2D1F00048F1E /* AppDelegate.swift in Sources */,
 				33CA92AE2E27AC58004B33C6 /* Graphs.swift in Sources */,
+				333696B22E27D26B00D65FDF /* Chart.swift in Sources */,
 				330E1D532E20DAEA008F5234 /* ExpenseModel.xcdatamodeld in Sources */,
 				330E1D552E2124B1008F5234 /* Expenses.swift in Sources */,
 				339310462E229029009506EA /* syncManager.swift in Sources */,
@@ -781,7 +785,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "ChartsOrg\\ Charts\\ master\\ Source/Supporting\\ Files ChartsOrg\\ Charts\\ master\\ Source/Charts";
+				DEVELOPMENT_ASSET_PATHS = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Expense Tracker App/Info.plist";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -809,7 +813,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "ChartsOrg\\ Charts\\ master\\ Source/Supporting\\ Files ChartsOrg\\ Charts\\ master\\ Source/Charts";
+				DEVELOPMENT_ASSET_PATHS = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Expense Tracker App/Info.plist";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;

@@ -15,6 +15,7 @@ class Home: UIViewController {
     let targetField = UITextField()
     let editButton = UIButton(type: .system)
     let expenseButton = UIButton(type: .system)
+    let graphButton = UIButton(type: .system)
     var currentTarget: MonthlyTarget?
     var isEditingTarget = false
 
@@ -28,6 +29,7 @@ class Home: UIViewController {
 
         homeView()
         expenseButtonView()
+        graphButtonView()
         setupCollectionView()
         fetchTargetAndUpdateUI()
         fetchExpenses()
@@ -79,6 +81,17 @@ class Home: UIViewController {
         expenseButton.addTarget(self, action: #selector(addExpense), for: .touchUpInside)
         view.addSubview(expenseButton)
     }
+    
+    // MARK: - Graph View button
+    func graphButtonView() {
+        graphButton.setTitle("View Charts", for: .normal)
+        graphButton.frame = CGRect(x: 40, y: 360, width: view.frame.width - 80, height: 44)
+        graphButton.backgroundColor = .systemBlue
+        graphButton.setTitleColor(.white, for: .normal)
+        graphButton.layer.cornerRadius = 8
+        graphButton.addTarget(self, action: #selector(viewGraph), for: .touchUpInside)
+        view.addSubview(graphButton)
+    }
 
     // MARK: - Collection view setup
     func setupCollectionView() {
@@ -88,7 +101,7 @@ class Home: UIViewController {
         layout.sectionInset = UIEdgeInsets(top: 20, left: 20, bottom: 20, right: 20)
         layout.itemSize = CGSize(width: view.frame.width - 40, height: 120)
 
-        collectionView = UICollectionView(frame: CGRect(x: 0, y: 360, width: view.frame.width, height: view.frame.height - 360), collectionViewLayout: layout)
+        collectionView = UICollectionView(frame: CGRect(x: 0, y: 420, width: view.frame.width, height: view.frame.height - 420), collectionViewLayout: layout)
         collectionView.backgroundColor = .clear
         collectionView.delegate = self
         collectionView.dataSource = self
@@ -181,6 +194,11 @@ class Home: UIViewController {
         fetchExpenses()
     }
 
+    @objc func viewGraph(){
+        let graphPage = PieChartViewController()
+        present(graphPage, animated: true)
+    }
+    
     func getCurrentMonth() -> String {
         let f = DateFormatter()
         f.dateFormat = "yyyy-MM"
