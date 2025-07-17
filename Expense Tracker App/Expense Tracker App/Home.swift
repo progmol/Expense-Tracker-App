@@ -7,6 +7,7 @@
 
 import UIKit
 import CoreData
+import FirebaseAuth
 
 class Home: UIViewController {
 
@@ -30,6 +31,7 @@ class Home: UIViewController {
         homeView()
         expenseButtonView()
         graphButtonView()
+        logoutButtonView()
         setupCollectionView()
         fetchTargetAndUpdateUI()
         fetchExpenses()
@@ -90,6 +92,18 @@ class Home: UIViewController {
         graphButton.addTarget(self, action: #selector(viewGraph), for: .touchUpInside)
         view.addSubview(graphButton)
     }
+    
+    //MARK: - Logout View Button
+    func logoutButtonView() {
+        let logoutButton = UIButton(type: .system)
+        logoutButton.setTitle("Logout", for: .normal)
+        logoutButton.frame = CGRect(x: 40, y: 420, width: view.frame.width - 80, height: 44)
+        logoutButton.backgroundColor = .systemRed
+        logoutButton.setTitleColor(.white, for: .normal)
+        logoutButton.layer.cornerRadius = 8
+        logoutButton.addTarget(self, action: #selector(handleLogout), for: .touchUpInside)
+        view.addSubview(logoutButton)
+    }
 
     // MARK: - Collection view setup
     func setupCollectionView() {
@@ -99,7 +113,7 @@ class Home: UIViewController {
         layout.sectionInset = UIEdgeInsets(top: 20, left: 20, bottom: 20, right: 20)
         layout.itemSize = CGSize(width: view.frame.width - 40, height: 120)
 
-        collectionView = UICollectionView(frame: CGRect(x: 0, y: 420, width: view.frame.width, height: view.frame.height - 420), collectionViewLayout: layout)
+        collectionView = UICollectionView(frame: CGRect(x: 0, y: 480, width: view.frame.width, height: view.frame.height - 480), collectionViewLayout: layout)
         collectionView.backgroundColor = .clear
         collectionView.delegate = self
         collectionView.dataSource = self
@@ -129,8 +143,11 @@ class Home: UIViewController {
     // MARK: - Fetch expenses
     func fetchExpenses() {
         let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
-        let request: NSFetchRequest<Expense> = Expense.fetchRequest()
-        allExpenses = try? context.fetch(request)
+        if let userId = UserDefaults.standard.string(forKey: "currentUserId") {
+            let request: NSFetchRequest<Expense> = Expense.fetchRequest()
+            request.predicate = NSPredicate(format: "userId == %@", userId)
+            allExpenses = try? context.fetch(request)
+        }
         limitNotification()
         collectionView.reloadData()
     }
@@ -168,6 +185,22 @@ class Home: UIViewController {
         }
     }
 
+    // MARK: - Logout
+    @objc func handleLogout() {
+        do {
+            try Auth.auth().signOut()
+        } catch {
+            print("Error signing out: \(error)")
+        }
+        
+        UserDefaults.standard.removeObject(forKey: "currentUserId")
+        
+        let loginVC = Login()
+        loginVC.modalPresentationStyle = .fullScreen
+        present(loginVC, animated: true)
+    }
+
+    
     // MARK: - Add Expense
     @objc func addExpense() {
         let expensePage = Expenses()
@@ -230,6 +263,9 @@ class Home: UIViewController {
         }
         
         let limitRequest: NSFetchRequest<Expense> = Expense.fetchRequest()
+        if let userId = UserDefaults.standard.string(forKey: "currentUserId") {
+            limitRequest.predicate = NSPredicate(format: "userId == %@", userId)
+        }
         let expenses = (try? context.fetch(limitRequest)) ?? []
         let total = expenses.reduce(0.0) { $0 + $1.amount }
         

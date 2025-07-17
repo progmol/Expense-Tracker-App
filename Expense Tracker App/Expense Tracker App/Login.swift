@@ -67,12 +67,17 @@ class Login: UIViewController {
                 self.showAlert("Login failed: \(error.localizedDescription)")
                 return
             }
-            self.showAlert("Login successful")
+            
+            if let uid = Auth.auth().currentUser?.uid {
+                    UserDefaults.standard.set(uid, forKey: "currentUserId")
+                }
+            
+            self.showAlert("Login successful") {
+                let home = Home()
+                self.navigationFunction(home)
+            }
         }
-        DispatchQueue.main.async {
-            let home = Home()
-            self.navigationFunction(home)
-        }
+        
     }
     
     @objc func googleSignin(){
@@ -100,17 +105,25 @@ class Login: UIViewController {
                     return
                 }
                 self.showAlert("Google Sign-In successful!")
+                
+                if let uid = Auth.auth().currentUser?.uid {
+                    UserDefaults.standard.set(uid, forKey: "currentUserId")
+                }
+                
+                DispatchQueue.main.async {
+                    let home = Home()
+                    self.navigationFunction(home)
+                }
             }
-            DispatchQueue.main.async {
-                let home = Home()
-                self.navigationFunction(home)
-            }
+            
         }
     }
     
-    func showAlert(_ message: String) {
+    func showAlert(_ message: String, completion: (() -> Void)? = nil) {
         let alert = UIAlertController(title: "Alert", message: message, preferredStyle: .alert)
-        let ok = UIAlertAction(title: "OK", style: .default, handler: nil)
+        let ok = UIAlertAction(title: "OK", style: .default){ _ in
+            completion?()
+        }
         alert.addAction(ok)
         present(alert, animated: true)
     }

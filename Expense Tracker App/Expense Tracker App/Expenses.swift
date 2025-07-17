@@ -120,6 +120,8 @@ class Expenses: UIViewController {
         } else {
             let newExpense = Expense(context: context)
             newExpense.id = UUID()
+            let userId = UserDefaults.standard.string(forKey: "currentUserId")
+            newExpense.userId = userId
             newExpense.title = title
             newExpense.amount = amount
             newExpense.date = expenseDate

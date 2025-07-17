@@ -12,7 +12,7 @@ import CoreData
 import Network
 
 final class SyncManager {
-
+    
     static let shared = SyncManager()
     
     private let monitor = NWPathMonitor()
@@ -75,7 +75,7 @@ final class SyncManager {
         
         let db = Firestore.firestore()
         let userRef = db.collection("users").document(uid)
-        let expenseRef = userRef.collection("Expense")
+        let expenseDocRef = userRef.collection("Expense").document(expenseId)
         
         let data: [String: Any] = [
             "title": expense.title ?? "",
@@ -88,48 +88,37 @@ final class SyncManager {
         ]
         
         userRef.getDocument { doc, error in
-            if let doc = doc, doc.exists {
-                // Check if expense exists by id, then update; else add
-                expenseRef.whereField("id", isEqualTo: expenseId).getDocuments { snapshot, error in
+            if let error = error {
+                print("[SyncManager] Failed to check user doc: \(error)")
+                return
+            }
+            
+            if doc?.exists == true {
+                // User doc exists → directly set data (create or update)
+                expenseDocRef.setData(data, merge: true) { error in
                     if let error = error {
-                        print("[SyncManager] Lookup error: \(error)")
-                        return
-                    }
-                    if let existingDoc = snapshot?.documents.first {
-                        existingDoc.reference.updateData(data) { error in
-                            if let error = error {
-                                print("[SyncManager] Update error: \(error)")
-                            } else {
-                                expense.needsSync = false
-                                try? context.save()
-                                print("[SyncManager] Expense updated.")
-                            }
-                        }
+                        print("[SyncManager] SetData error: \(error)")
                     } else {
-                        expenseRef.addDocument(data: data) { error in
-                            if let error = error {
-                                print("[SyncManager] Add error: \(error)")
-                            } else {
-                                expense.needsSync = false
-                                try? context.save()
-                                print("[SyncManager] Expense added.")
-                            }
-                        }
+                        expense.needsSync = false
+                        try? context.save()
+                        print("[SyncManager] Expense synced (created or updated).")
                     }
                 }
             } else {
+                // User doc doesn't exist → create user doc first, then expense
                 userRef.setData(["createdAt": FieldValue.serverTimestamp()]) { error in
                     if let error = error {
-                        print("[SyncManager] User doc create error: \(error)")
-                    } else {
-                        expenseRef.addDocument(data: data) { error in
-                            if let error = error {
-                                print("[SyncManager] Add after create error: \(error)")
-                            } else {
-                                expense.needsSync = false
-                                try? context.save()
-                                print("[SyncManager] Added after user doc creation.")
-                            }
+                        print("[SyncManager] Failed to create user doc: \(error)")
+                        return
+                    }
+                    
+                    expenseDocRef.setData(data, merge: true) { error in
+                        if let error = error {
+                            print("[SyncManager] Failed to add expense after creating user doc: \(error)")
+                        } else {
+                            expense.needsSync = false
+                            try? context.save()
+                            print("[SyncManager] Expense added after creating user doc.")
                         }
                     }
                 }
@@ -137,31 +126,43 @@ final class SyncManager {
         }
     }
     
+    
     private func deleteExpense(_ expense: Expense, forUser uid: String, context: NSManagedObjectContext) {
         guard let expenseId = expense.id?.uuidString else {
             print("[SyncManager] Missing ID to delete.")
             return
         }
+        
         let db = Firestore.firestore()
-        let userRef = db.collection("users").document(uid)
-        userRef.collection("Expense").whereField("id", isEqualTo: expenseId).getDocuments { snapshot, error in
+        let expenseRef = db.collection("users").document(uid).collection("Expense")
+        
+        // Use whereField to find the document by stored 'id'
+        expenseRef.whereField("id", isEqualTo: expenseId).getDocuments { snapshot, error in
             if let error = error {
                 print("[SyncManager] Delete lookup error: \(error)")
                 return
             }
+            
             guard let doc = snapshot?.documents.first else {
-                print("[SyncManager] Expense not found to delete.")
+                print("[SyncManager] Expense not found to delete in Firestore.")
+                // Still remove locally because it doesn't exist remotely
+                context.delete(expense)
+                try? context.save()
+                print("[SyncManager] Local expense deleted (was missing in Firestore).")
                 return
             }
+            
             doc.reference.delete { error in
                 if let error = error {
                     print("[SyncManager] Delete error: \(error)")
                 } else {
+                    // Finally delete from Core Data
                     context.delete(expense)
                     try? context.save()
-                    print("[SyncManager] Deleted.")
+                    print("[SyncManager] Deleted from Firestore and local Core Data.")
                 }
             }
         }
     }
+    
 }

@@ -18,6 +18,9 @@ class PieChartViewController: UIViewController {
         let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
         
         let fetchRequest: NSFetchRequest<Expense> = Expense.fetchRequest()
+        if let userId = UserDefaults.standard.string(forKey: "currentUserId") {
+            fetchRequest.predicate = NSPredicate(format: "userId == %@", userId)
+        }
         let expenses = (try? context.fetch(fetchRequest)) ?? []
         
         guard !expenses.isEmpty else {
