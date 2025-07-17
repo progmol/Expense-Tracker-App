@@ -17,7 +17,7 @@ class Login: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = UIColor.lightGray
+        view.backgroundColor = .systemBackground
         mainfunc()
     }
     
@@ -25,18 +25,20 @@ class Login: UIViewController {
         nameField.placeholder = "Please Enter your username!"
         nameField.borderStyle = .roundedRect
         nameField.frame = CGRect(x: 40, y: 150, width: view.frame.width - 80, height: 44)
+        nameField.textColor = .label
         view.addSubview(nameField)
         
         password.placeholder = "Please Enter your password!!"
         password.borderStyle = .roundedRect
         password.isSecureTextEntry = true
         password.frame = CGRect(x: 40, y: 210, width: view.frame.width - 80, height: 44)
+        password.textColor = .label
         view.addSubview(password)
         
         let loginButton = UIButton(type: .system)
         loginButton.setTitle("Login", for: .normal)
         loginButton.frame = CGRect(x: 40, y: 270, width: 80, height: 44)
-        loginButton.backgroundColor = .blue
+        loginButton.backgroundColor = .systemBlue
         loginButton.setTitleColor(.white, for: .normal)
         loginButton.layer.cornerRadius = 8
         loginButton.addTarget(self, action: #selector(loginFunction), for: .touchUpInside)
@@ -124,4 +126,3 @@ class Login: UIViewController {
     }
 
 }
-

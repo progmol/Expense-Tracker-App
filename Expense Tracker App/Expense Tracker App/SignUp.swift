@@ -17,7 +17,7 @@ class SignUp: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = UIColor.lightGray
+        view.backgroundColor = .systemBackground
         signupView()
     }
     
@@ -26,6 +26,7 @@ class SignUp: UIViewController {
         email.borderStyle = .roundedRect
         email.frame = CGRect(x: 40, y: 150, width: view.frame.width - 80, height: 44)
         email.autocapitalizationType = .none
+        email.textColor = .label
         view.addSubview(email)
         
         password.placeholder = "Please Enter your password!!"
@@ -34,6 +35,7 @@ class SignUp: UIViewController {
         password.frame = CGRect(x: 40, y: 210, width: view.frame.width - 80, height: 44)
         password.autocapitalizationType = .none
         password.autocorrectionType = .no
+        password.textColor = .label
         view.addSubview(password)
         
         confirmPassword.placeholder = "Please Confirm your password!!"
@@ -42,12 +44,13 @@ class SignUp: UIViewController {
         confirmPassword.frame = CGRect(x: 40, y: 270, width: view.frame.width - 80, height: 44)
         password.autocorrectionType = .no
         password.autocapitalizationType = .none
+        confirmPassword.textColor = .label
         view.addSubview(confirmPassword)
         
         let signupButton = UIButton(type: .system)
         signupButton.setTitle("Sign Up", for: .normal)
         signupButton.frame = CGRect(x: 40, y: 340, width: 80, height: 44)
-        signupButton.backgroundColor = .blue
+        signupButton.backgroundColor = .systemBlue
         signupButton.setTitleColor(.white, for: .normal)
         signupButton.layer.cornerRadius = 8
         signupButton.addTarget(self, action: #selector(handleinput), for: .touchUpInside)
@@ -67,10 +70,10 @@ class SignUp: UIViewController {
         
         //Should Learn afterwards
         let emailRegEx = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}"
-            let predicate = NSPredicate(format: "SELF MATCHES %@", emailRegEx)
-            if !predicate.evaluate(with: email) {
-                showAlert("Enter a valid email address.")
-                return
+        let predicate = NSPredicate(format: "SELF MATCHES %@", emailRegEx)
+        if !predicate.evaluate(with: email) {
+            showAlert("Enter a valid email address.")
+            return
         }
         
         if pass.isEmpty || confirm.isEmpty {

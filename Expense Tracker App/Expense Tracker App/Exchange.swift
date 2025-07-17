@@ -16,10 +16,11 @@ class exchangeViewController: UIViewController, UITableViewDataSource {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = .systemBackground
         title = "Exchange Rates"
         
         tableView.frame = view.bounds
+        tableView.backgroundColor = .systemBackground
         tableView.dataSource = self
         view.addSubview(tableView)
         
@@ -69,7 +70,6 @@ class exchangeViewController: UIViewController, UITableViewDataSource {
                         let amountInPKR = amount / usdToPKR
                         tempResults.append((currency, amountInPKR))
                     } else if let usdToTarget = decoded.rates[currency] {
-                        //First convert to pkr then multiply by amount
                         let targetPerPKR = usdToTarget / usdToPKR
                         let convertedAmount = targetPerPKR * amount
                         tempResults.append((currency, convertedAmount))
@@ -99,6 +99,9 @@ class exchangeViewController: UIViewController, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let data = convertedRates[indexPath.row]
         let cell = UITableViewCell(style: .subtitle, reuseIdentifier: nil)
+        cell.backgroundColor = .secondarySystemBackground
+        cell.textLabel?.textColor = .label
+        cell.detailTextLabel?.textColor = .secondaryLabel
         cell.textLabel?.text = "\(data.currency): \(String(format: "%.2f", data.amount))"
         cell.detailTextLabel?.text = "For PKR \(baseAmount ?? 0.0)"
         return cell

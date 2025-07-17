@@ -25,7 +25,7 @@ class Home: UIViewController {
     // MARK: - viewDidLoad
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = UIColor.lightGray
+        view.backgroundColor = .systemBackground
 
         homeView()
         expenseButtonView()
@@ -42,7 +42,6 @@ class Home: UIViewController {
 //        limitNotification()
 //    }
 
-
     // MARK: - Home target view
     func homeView(){
         targetLabel.text = "Your Monthly Target: -"
@@ -51,7 +50,7 @@ class Home: UIViewController {
         targetLabel.textAlignment = .center
         targetLabel.frame = CGRect(x: 20, y: 100, width: view.frame.width - 40, height: 50)
         targetLabel.layer.cornerRadius = 10
-        targetLabel.backgroundColor = UIColor.white
+        targetLabel.backgroundColor = .secondarySystemBackground
         targetLabel.layer.masksToBounds = true
         view.addSubview(targetLabel)
 
@@ -68,7 +67,6 @@ class Home: UIViewController {
         editButton.layer.cornerRadius = 8
         editButton.addTarget(self, action: #selector(handleAddOrEdit), for: .touchUpInside)
         view.addSubview(editButton)
-        
     }
 
     // MARK: - Expenses Add button
@@ -176,7 +174,6 @@ class Home: UIViewController {
         present(expensePage, animated: true)
     }
     
-
     // MARK: - Delete Expense
     @objc func deleteExpenseFromCollection(_ sender: UIButton) {
         let index = sender.tag
@@ -204,19 +201,17 @@ class Home: UIViewController {
         f.dateFormat = "yyyy-MM"
         return(f.string(from: Date()))
     }
-    
+
     // MARK: - Edit Expense
     @objc func editExpenseFromCollection(_ sender: UIButton) {
         let index = sender.tag
-        guard  let expense = allExpenses?[index] else {return}
+        guard let expense = allExpenses?[index] else { return }
         let editViewController = Expenses()
         editViewController.expenseToEdit = expense
         present(editViewController, animated: true)
     }
-    
-    
+
     // MARK: - Notification when user is exceeding the limit
-    
     func limitNotification(){
         let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
         
@@ -243,8 +238,8 @@ class Home: UIViewController {
         
         if percentage >= 80 {
             DispatchQueue.main.async {
-                    self.showAlert("You are exceeding your monthly limit")
-                }
+                self.showAlert("You are exceeding your monthly limit")
+            }
         }
     }
 
@@ -256,18 +251,15 @@ class Home: UIViewController {
     }
     
     // MARK: - Exchange Rates Function
-
-        @objc func showExchangeRates(_ sender: UIButton){
-            let index = sender.tag
-            guard  let expense = allExpenses?[index] else {return}
-            let amount = expense.amount
-            let exchangeVC = exchangeViewController()
-            exchangeVC.baseAmount = amount
-            present(exchangeVC, animated: true)
-        }
+    @objc func showExchangeRates(_ sender: UIButton){
+        let index = sender.tag
+        guard let expense = allExpenses?[index] else { return }
+        let amount = expense.amount
+        let exchangeVC = exchangeViewController()
+        exchangeVC.baseAmount = amount
+        present(exchangeVC, animated: true)
+    }
 }
-
-
 
 // MARK: - Collection view data source & delegate --- It should be learn afterwards!!
 extension Home: UICollectionViewDataSource, UICollectionViewDelegate {
@@ -282,7 +274,7 @@ extension Home: UICollectionViewDataSource, UICollectionViewDelegate {
         // Remove old views
         cell.contentView.subviews.forEach { $0.removeFromSuperview() }
 
-        cell.backgroundColor = .white
+        cell.backgroundColor = .secondarySystemBackground
         cell.layer.cornerRadius = 10
         cell.layer.shadowColor = UIColor.black.cgColor
         cell.layer.shadowOpacity = 0.1
@@ -312,7 +304,7 @@ extension Home: UICollectionViewDataSource, UICollectionViewDelegate {
 
         let deleteButton = UIButton(type: .system)
         deleteButton.setTitle("Delete", for: .normal)
-        deleteButton.setTitleColor(.red, for: .normal)
+        deleteButton.setTitleColor(.systemRed, for: .normal)
         deleteButton.titleLabel?.font = UIFont.systemFont(ofSize: 14)
         deleteButton.frame = CGRect(x: cell.frame.width - 60, y: 10, width: 50, height: 30)
         deleteButton.tag = indexPath.item
@@ -321,7 +313,7 @@ extension Home: UICollectionViewDataSource, UICollectionViewDelegate {
         
         let editExpense = UIButton(type: .system)
         editExpense.setTitle("Edit", for: .normal)
-        editExpense.setTitleColor(.blue, for: .normal)
+        editExpense.setTitleColor(.systemBlue, for: .normal)
         editExpense.titleLabel?.font = UIFont.systemFont(ofSize: 14)
         editExpense.frame = CGRect(x: cell.frame.width - 60, y: 40, width: 50, height: 30)
         editExpense.tag = indexPath.item
@@ -329,11 +321,11 @@ extension Home: UICollectionViewDataSource, UICollectionViewDelegate {
         cell.contentView.addSubview(editExpense)
 
         let exchangeButton = UIButton(type: .system)
-        exchangeButton.setTitleColor(.blue, for: .normal)
+        exchangeButton.setTitle("Exchange", for: .normal)
+        exchangeButton.setTitleColor(.systemBlue, for: .normal)
         exchangeButton.titleLabel?.font = UIFont.systemFont(ofSize: 14)
         exchangeButton.frame = CGRect(x: cell.frame.width - 60, y: 70, width: 50, height: 30)
         exchangeButton.tag = indexPath.item
-        exchangeButton.setTitle("Exchange", for: .normal)
         exchangeButton.addTarget(self, action: #selector(showExchangeRates(_:)), for: .touchUpInside)
         cell.contentView.addSubview(exchangeButton)
         

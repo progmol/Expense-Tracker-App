@@ -15,7 +15,7 @@ class Expenses: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = UIColor.lightGray
+        view.backgroundColor = .systemBackground
         interface()
     }
     
@@ -37,7 +37,7 @@ class Expenses: UIViewController {
         expenseLabel.textAlignment = .center
         expenseLabel.frame = CGRect(x: 20, y: 100, width: view.frame.width - 40, height: 50)
         expenseLabel.layer.cornerRadius = 10
-        expenseLabel.backgroundColor = UIColor.white
+        expenseLabel.backgroundColor = .secondarySystemBackground
         view.addSubview(expenseLabel)
         
         //Input for expense title
