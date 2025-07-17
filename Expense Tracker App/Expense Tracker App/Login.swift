@@ -104,17 +104,17 @@ class Login: UIViewController {
                     self.showAlert("Firebase Sign-In error: \(error.localizedDescription)")
                     return
                 }
-                self.showAlert("Google Sign-In successful!")
                 
                 if let uid = Auth.auth().currentUser?.uid {
                     UserDefaults.standard.set(uid, forKey: "currentUserId")
                 }
                 
-                DispatchQueue.main.async {
+                self.showAlert("Google Sign-In successful!"){
                     let home = Home()
                     self.navigationFunction(home)
                 }
             }
+    
             
         }
     }
